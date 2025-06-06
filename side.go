@@ -53,6 +53,7 @@ func Handlerrun() {
 	ncmds.Register("register", registerUser)
 	ncmds.Register("reset", resetData)
 	ncmds.Register("users", users)
+	ncmds.Register("agg", agg)
 
 	err = ncmds.Run(&newState, cmd)
 	if err != nil {
