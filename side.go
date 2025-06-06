@@ -40,8 +40,8 @@ func Handlerrun() {
 
 	// ensure accurate input arguments
 	arguments := os.Args[1:]
-	if len(arguments) < 2 {
-		fmt.Println("Usage: go run . command <name>")
+	if len(arguments) < 1 {
+		fmt.Println("Usage: go run . command <name_if_required>")
 		os.Exit(1)
 	}
 	// initialize the command struct
@@ -51,6 +51,8 @@ func Handlerrun() {
 
 	ncmds.Register("login", handlerLogin)
 	ncmds.Register("register", registerUser)
+	ncmds.Register("reset", resetData)
+	ncmds.Register("users", users)
 
 	err = ncmds.Run(&newState, cmd)
 	if err != nil {

@@ -32,7 +32,37 @@ func (c *commands) Register(name string, f func(*state, command) error) {
 	c.Cmds[name] = f
 }
 
+func users(s *state, cmd command) error {
+	// get list of users in db
+	names, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("error in getting users: %v", err)
+	}
+	for _, name := range names {
+		if name == s.cfg.Current_user_name {
+			fmt.Printf("* %s (current)\n", name)
+		} else {
+			fmt.Printf("* %s\n", name)
+		}
+	}
+	return nil
+}
+
+func resetData(s *state, cmd command) error {
+	//reset table in users db
+	err := s.db.ResetTable(context.Background())
+	if err != nil {
+		return fmt.Errorf("error in create user: %v", err)
+	}
+	fmt.Println("The database has been reset")
+	return nil
+}
+
 func registerUser(s *state, cmd command) error {
+	if len(cmd.Handler) < 2 {
+		fmt.Println("Usage: go run . command <name>")
+		os.Exit(1)
+	}
 	userName := cmd.Handler[1]
 	currentTime := time.Now()
 
@@ -66,6 +96,10 @@ func registerUser(s *state, cmd command) error {
 }
 
 func handlerLogin(s *state, cmd command) error {
+	if len(cmd.Handler) < 2 {
+		fmt.Println("Usage: go run . command <name>")
+		os.Exit(1)
+	}
 	userName := cmd.Handler[1]
 
 	// Check if user with that name already exists

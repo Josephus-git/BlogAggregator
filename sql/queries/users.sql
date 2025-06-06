@@ -12,3 +12,8 @@ RETURNING *;
 SELECT name FROM users
 WHERE name = $1;
 
+-- name: ResetTable :exec
+TRUNCATE TABLE users;
+
+-- name: GetUsers :many
+SELECT name FROM users;
