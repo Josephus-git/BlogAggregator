@@ -28,12 +28,45 @@ func users(s *state, cmd command) error {
 }
 
 func resetData(s *state, cmd command) error {
-	//reset table in users db
 	err := s.db.ResetTable(context.Background())
 	if err != nil {
-		return fmt.Errorf("error in create user: %v", err)
+		return fmt.Errorf("error in reset Table: %v", err)
 	}
 	fmt.Println("The database has been reset")
+	return nil
+}
+
+func addfeed(s *state, cmd command) error {
+	currentUserName := s.cfg.Current_user_name
+	UserId, err := s.db.GetUserId(context.Background(), currentUserName)
+	if err != nil {
+		return fmt.Errorf("error in getting user: %v", err)
+	}
+
+	if len(cmd.Handler) < 3 {
+		fmt.Println("Usage: go run . addfeed <name> <url>")
+		os.Exit(1)
+	}
+	name := cmd.Handler[1]
+	url := cmd.Handler[2]
+	currentTime := time.Now()
+
+	// Create new feed in database
+	newFeed := database.CreateFeedParams{
+		ID:        uuid.New(),
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
+		Name:      name,
+		Url:       url,
+		UserID:    UserId,
+	}
+
+	feed, err := s.db.CreateFeed(context.Background(), newFeed)
+	if err != nil {
+		return fmt.Errorf("error creating feed: %v", err)
+	}
+	fmt.Println("feed created successfully")
+	fmt.Println(feed)
 	return nil
 }
 

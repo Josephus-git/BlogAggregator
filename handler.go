@@ -23,6 +23,17 @@ func (c *commands) Run(s *state, cmd command) error {
 	return cmdFunc(s, cmd)
 }
 
+func feeds(s *state, cmd command) error {
+	allFeeds, err := s.db.GetFeeds(context.Background())
+	if err != nil {
+		return fmt.Errorf("error in getting feeds: %v", err)
+	}
+	for _, feed := range allFeeds {
+		fmt.Println(feed)
+	}
+	return nil
+}
+
 func agg(s *state, cmd command) error {
 	const url = "https://www.wagslane.dev/index.xml"
 	rssFeed, err := fetchFeed(context.Background(), url)
