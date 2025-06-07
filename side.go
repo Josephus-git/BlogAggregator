@@ -56,6 +56,7 @@ func Handlerrun() {
 	ncmds.Register("agg", agg)
 	ncmds.Register("addfeed", addfeed)
 	ncmds.Register("feeds", feeds)
+	ncmds.Register("follow", follow)
 
 	err = ncmds.Run(&newState, cmd)
 	if err != nil {

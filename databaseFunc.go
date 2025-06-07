@@ -11,6 +11,48 @@ import (
 	"github.com/josephus-git/BlogAggregator/internal/database"
 )
 
+func follow(s *state, cmd command) error {
+	// Check if input is accurate
+	if len(cmd.Handler) < 2 {
+		fmt.Println("Usage: go run . follow <url>")
+		os.Exit(1)
+	}
+	url := cmd.Handler[1]
+	currentTime := time.Now()
+
+	// get current user id
+	currentUserName := s.cfg.Current_user_name
+	UserId, err := s.db.GetUserId(context.Background(), currentUserName)
+	if err != nil {
+		return fmt.Errorf("error in getting user: %v", err)
+	}
+
+	// get feed id
+	feedID, err := s.db.GetfeedId(context.Background(), url)
+	if err != nil {
+		return fmt.Errorf("error in getting feed id: %v", err)
+	}
+
+	// Create new feed follow
+	newFeedFollow := database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
+		UserID:    UserId,
+		FeedID:    feedID,
+	}
+
+	FeedFollows, err := s.db.CreateFeedFollow(context.Background(), newFeedFollow)
+	if err != nil {
+		return fmt.Errorf("error creating feed follow: %v", err)
+	}
+
+	fmt.Printf("feed follow created successfully; FeedName: %s, UserName: %s\n", FeedFollows.FeedName, FeedFollows.UserName)
+
+	return nil
+
+}
+
 func users(s *state, cmd command) error {
 	// get list of users in db
 	names, err := s.db.GetUsers(context.Background())
