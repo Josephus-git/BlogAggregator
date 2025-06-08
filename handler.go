@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+
+	"github.com/josephus-git/BlogAggregator/internal/database"
 )
 
 type command struct {
@@ -23,15 +25,18 @@ func (c *commands) Run(s *state, cmd command) error {
 	return cmdFunc(s, cmd)
 }
 
-func feeds(s *state, cmd command) error {
-	allFeeds, err := s.db.GetFeeds(context.Background())
-	if err != nil {
-		return fmt.Errorf("error in getting feeds: %v", err)
+func middlewareLoggedIn(handler func(s *state, cmd command, user database.User) error) func(*state, command) error {
+	return func(s *state, cmd command) error {
+		// check if user is available in database
+		if s.cfg.Current_user_name == "" {
+			return fmt.Errorf("authentication required: no user available")
+		}
+		user, err := s.db.GetUser(context.Background(), s.cfg.Current_user_name)
+		if err != nil {
+			return fmt.Errorf("authentication failed: error fetching user")
+		}
+		return handler(s, cmd, user)
 	}
-	for _, feed := range allFeeds {
-		fmt.Println(feed)
-	}
-	return nil
 }
 
 func agg(s *state, cmd command) error {

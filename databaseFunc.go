@@ -11,7 +11,32 @@ import (
 	"github.com/josephus-git/BlogAggregator/internal/database"
 )
 
-func follow(s *state, cmd command) error {
+func following(s *state, cmd command, user database.User) error {
+
+	feedsFollowing, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
+	if err != nil {
+		return fmt.Errorf("error in getting feed followed by user: %v", err)
+	}
+
+	fmt.Printf("user: %s follows:\n", s.cfg.Current_user_name)
+	for _, feedFollow := range feedsFollowing {
+		fmt.Println(feedFollow.FeedName)
+	}
+	return nil
+}
+
+func feeds(s *state, cmd command) error {
+	allFeeds, err := s.db.GetFeeds(context.Background())
+	if err != nil {
+		return fmt.Errorf("error in getting feeds: %v", err)
+	}
+	for _, feed := range allFeeds {
+		fmt.Println(feed)
+	}
+	return nil
+}
+
+func follow(s *state, cmd command, user database.User) error {
 	// Check if input is accurate
 	if len(cmd.Handler) < 2 {
 		fmt.Println("Usage: go run . follow <url>")
@@ -19,13 +44,6 @@ func follow(s *state, cmd command) error {
 	}
 	url := cmd.Handler[1]
 	currentTime := time.Now()
-
-	// get current user id
-	currentUserName := s.cfg.Current_user_name
-	UserId, err := s.db.GetUserId(context.Background(), currentUserName)
-	if err != nil {
-		return fmt.Errorf("error in getting user: %v", err)
-	}
 
 	// get feed id
 	feedID, err := s.db.GetfeedId(context.Background(), url)
@@ -38,7 +56,7 @@ func follow(s *state, cmd command) error {
 		ID:        uuid.New(),
 		CreatedAt: currentTime,
 		UpdatedAt: currentTime,
-		UserID:    UserId,
+		UserID:    user.ID,
 		FeedID:    feedID,
 	}
 
@@ -78,13 +96,8 @@ func resetData(s *state, cmd command) error {
 	return nil
 }
 
-func addfeed(s *state, cmd command) error {
-	currentUserName := s.cfg.Current_user_name
-	UserId, err := s.db.GetUserId(context.Background(), currentUserName)
-	if err != nil {
-		return fmt.Errorf("error in getting user: %v", err)
-	}
-
+func addfeed(s *state, cmd command, user database.User) error {
+	// Ensure accurate querry input
 	if len(cmd.Handler) < 3 {
 		fmt.Println("Usage: go run . addfeed <name> <url>")
 		os.Exit(1)
@@ -100,7 +113,7 @@ func addfeed(s *state, cmd command) error {
 		UpdatedAt: currentTime,
 		Name:      name,
 		Url:       url,
-		UserID:    UserId,
+		UserID:    user.ID,
 	}
 
 	feed, err := s.db.CreateFeed(context.Background(), newFeed)
@@ -108,7 +121,23 @@ func addfeed(s *state, cmd command) error {
 		return fmt.Errorf("error creating feed: %v", err)
 	}
 	fmt.Println("feed created successfully")
-	fmt.Println(feed)
+	fmt.Println(feed.Name)
+
+	// Create new feed follow
+	newFeedFollow := database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+	}
+
+	FeedFollows, err := s.db.CreateFeedFollow(context.Background(), newFeedFollow)
+	if err != nil {
+		return fmt.Errorf("error creating feed follow: %v", err)
+	}
+	fmt.Printf("feed follow created successfully; FeedName: %s, UserName: %s\n", FeedFollows.FeedName, FeedFollows.UserName)
+
 	return nil
 }
 
