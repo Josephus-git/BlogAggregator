@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/josephus-git/BlogAggregator/internal/database"
 )
@@ -40,13 +41,26 @@ func middlewareLoggedIn(handler func(s *state, cmd command, user database.User) 
 }
 
 func agg(s *state, cmd command) error {
-	const url = "https://www.wagslane.dev/index.xml"
-	rssFeed, err := fetchFeed(context.Background(), url)
-	if err != nil {
-		return err
+	if len(cmd.Handler) < 2 {
+		fmt.Println("Usage: go run . command <time_in_seconds(numbersonly)>")
+		os.Exit(1)
 	}
-	fmt.Println(rssFeed)
-	return nil
+	duration := fmt.Sprintf("%ss", cmd.Handler[1])
+	time_between_reqs, err := time.ParseDuration(duration)
+	if err != nil {
+		return fmt.Errorf("error creating time between requests: %v", err)
+	}
+
+	fmt.Printf("Collecting feeds every %v\n", time_between_reqs)
+
+	ticker := time.NewTicker(time_between_reqs)
+	for ; ; <-ticker.C {
+		scrapeFeeds(s)
+		fmt.Println("feeds completely printed")
+		fmt.Println("----------------")
+		fmt.Println("")
+	}
+
 }
 
 func (c *commands) Register(name string, f func(*state, command) error) {

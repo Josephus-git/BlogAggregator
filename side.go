@@ -53,11 +53,12 @@ func Handlerrun() {
 	ncmds.Register("register", registerUser)
 	ncmds.Register("reset", resetData)
 	ncmds.Register("users", users)
-	ncmds.Register("agg", agg)
 	ncmds.Register("addfeed", middlewareLoggedIn(addfeed))
 	ncmds.Register("feeds", feeds)
 	ncmds.Register("follow", middlewareLoggedIn(follow))
 	ncmds.Register("following", middlewareLoggedIn(following))
+	ncmds.Register("unfollow", middlewareLoggedIn(unfollow))
+	ncmds.Register("agg", agg)
 
 	err = ncmds.Run(&newState, cmd)
 	if err != nil {

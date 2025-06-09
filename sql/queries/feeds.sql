@@ -16,6 +16,19 @@ FROM feeds
 LEFT JOIN users
 ON feeds.user_id = users.id;
 
--- name: GetfeedId :one
-SELECT id FROM feeds
+-- name: Getfeed :one
+SELECT * FROM feeds
 WHERE url = $1;
+
+-- name: MarkFeedFetched :exec
+UPDATE feeds
+SET last_fetched_at = $1,
+    updated_at = $2
+WHERE id = $3;
+
+-- name: GetNextFeedToFetch :one
+SELECT * FROM feeds
+ORDER BY
+    last_fetched_at ASC NULLS FIRST,
+    id ASC -- for stable ordering if multiple feeds have same last_fetched e.g all null
+LIMIT 1;
