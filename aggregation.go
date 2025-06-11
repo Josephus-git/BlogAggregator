@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -32,17 +31,15 @@ func browse(s *state, cmd command) error {
 	if err != nil {
 		return fmt.Errorf("error getting posts: %v", err)
 	}
-	println("Posts:")
-
+	fmt.Printf("Found %d posts for user %s:\n", len(posts), s.cfg.Current_user_name)
 	for _, post := range posts {
-		postStruct := reflect.ValueOf(post)
-		for i := range postStruct.NumField() {
-			field := postStruct.Type().Field(i)
-			fmt.Printf("Title: %s, Value: %v\n", field.Name, postStruct.Field(i).Interface())
-		}
-		println("--------")
-		println("")
+		fmt.Printf("%s from %s\n", post.PublishedAt.Time.Format("Mon Jan 2"), post.Title)
+		fmt.Printf("--- %s ---\n", post.Title)
+		fmt.Printf("    %v\n", post.Description.String)
+		fmt.Printf("Link: %s\n", post.Url)
+		fmt.Println("=====================================")
 	}
+
 	return nil
 }
 
