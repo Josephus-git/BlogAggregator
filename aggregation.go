@@ -21,7 +21,7 @@ func browse(s *state, cmd command) error {
 		// Try to parse the string argument to an integer
 		parsedLimit, err := strconv.Atoi(cmd.Handler[1])
 		if err != nil {
-			fmt.Println("Usage: ./BlogAggregator browse limit(optional integer)")
+			fmt.Println("Usage: ./gator browse limit(optional integer)")
 			os.Exit(1)
 		}
 		limit = parsedLimit

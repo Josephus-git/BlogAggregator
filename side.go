@@ -41,7 +41,7 @@ func Handlerrun() {
 	// ensure accurate input arguments
 	arguments := os.Args[1:]
 	if len(arguments) < 1 {
-		fmt.Println("Usage: go run . command <name_if_required>")
+		fmt.Println("Usage: ./gator command <name_if_required>")
 		os.Exit(1)
 	}
 	// initialize the command struct
