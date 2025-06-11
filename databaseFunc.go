@@ -14,7 +14,7 @@ import (
 func unfollow(s *state, cmd command, user database.User) error {
 	// Check if input is accurate
 	if len(cmd.Handler) < 2 {
-		fmt.Println("Usage: go run . Unfollow <url>")
+		fmt.Println("Usage: ./BlogAggregator Unfollow <url>")
 		os.Exit(1)
 	}
 	// get feed id
@@ -67,7 +67,7 @@ func feeds(s *state, cmd command) error {
 func follow(s *state, cmd command, user database.User) error {
 	// Check if input is accurate
 	if len(cmd.Handler) < 2 {
-		fmt.Println("Usage: go run . follow <url>")
+		fmt.Println("Usage: ./BlogAggregator follow <url>")
 		os.Exit(1)
 	}
 	url := cmd.Handler[1]
@@ -127,7 +127,7 @@ func resetData(s *state, cmd command) error {
 func addfeed(s *state, cmd command, user database.User) error {
 	// Ensure accurate querry input
 	if len(cmd.Handler) < 3 {
-		fmt.Println("Usage: go run . addfeed <name> <url>")
+		fmt.Println("Usage: ./BlogAggregator addfeed <name> <url>")
 		os.Exit(1)
 	}
 	name := cmd.Handler[1]
@@ -171,7 +171,7 @@ func addfeed(s *state, cmd command, user database.User) error {
 
 func registerUser(s *state, cmd command) error {
 	if len(cmd.Handler) < 2 {
-		fmt.Println("Usage: go run . command <name>")
+		fmt.Println("Usage: ./BlogAggregator command <name>")
 		os.Exit(1)
 	}
 	userName := cmd.Handler[1]

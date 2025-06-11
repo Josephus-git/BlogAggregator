@@ -42,7 +42,7 @@ func middlewareLoggedIn(handler func(s *state, cmd command, user database.User) 
 
 func agg(s *state, cmd command) error {
 	if len(cmd.Handler) < 2 {
-		fmt.Println("Usage: go run . agg <time_in_seconds(numbersonly)>")
+		fmt.Println("Usage: ./BlogAggregator agg <time_in_seconds(numbersonly)>")
 		os.Exit(1)
 	}
 	duration := fmt.Sprintf("%ss", cmd.Handler[1])
@@ -69,7 +69,7 @@ func (c *commands) Register(name string, f func(*state, command) error) {
 
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.Handler) < 2 {
-		fmt.Println("Usage: go run . command <name>")
+		fmt.Println("Usage: ./BlogAggregator command <name>")
 		os.Exit(1)
 	}
 	userName := cmd.Handler[1]
