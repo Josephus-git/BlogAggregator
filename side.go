@@ -59,6 +59,7 @@ func Handlerrun() {
 	ncmds.Register("following", middlewareLoggedIn(following))
 	ncmds.Register("unfollow", middlewareLoggedIn(unfollow))
 	ncmds.Register("agg", agg)
+	ncmds.Register("browse", browse)
 
 	err = ncmds.Run(&newState, cmd)
 	if err != nil {

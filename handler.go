@@ -42,7 +42,7 @@ func middlewareLoggedIn(handler func(s *state, cmd command, user database.User) 
 
 func agg(s *state, cmd command) error {
 	if len(cmd.Handler) < 2 {
-		fmt.Println("Usage: go run . command <time_in_seconds(numbersonly)>")
+		fmt.Println("Usage: go run . agg <time_in_seconds(numbersonly)>")
 		os.Exit(1)
 	}
 	duration := fmt.Sprintf("%ss", cmd.Handler[1])
