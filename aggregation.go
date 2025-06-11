@@ -49,7 +49,7 @@ func browse(s *state, cmd command) error {
 func scrapeFeeds(s *state) error {
 
 	// fetch next feed id
-	fetchedFeed, err := s.db.GetNextFeedToFetch(context.Background())
+	feed, err := s.db.GetNextFeedToFetch(context.Background())
 	if err != nil {
 		return fmt.Errorf("error fetching nextfeed: %v", err)
 	}
@@ -58,7 +58,7 @@ func scrapeFeeds(s *state) error {
 	markParams := database.MarkFeedFetchedParams{
 		LastFetchedAt: sql.NullTime{Time: time.Now(), Valid: true},
 		UpdatedAt:     time.Now(),
-		ID:            fetchedFeed.ID,
+		ID:            feed.ID,
 	}
 	err = s.db.MarkFeedFetched(context.Background(), markParams)
 	if err != nil {
@@ -66,33 +66,41 @@ func scrapeFeeds(s *state) error {
 	}
 
 	// fetch feed
-	feed, err := s.db.Getfeed(context.Background(), fetchedFeed.Url)
+	fetchedFeed, err := fetchFeed(context.Background(), feed.Url)
 	if err != nil {
 		return fmt.Errorf("error in getting feed: %v", err)
 	}
-
-	// save post
-	newPost := database.CreatePostParams{
-		ID:          uuid.New(),
-		CreatedAt:   feed.CreatedAt,
-		UpdatedAt:   feed.UpdatedAt,
-		Title:       feed.Name,
-		Url:         feed.Url,
-		Description: feed.Name,
-		PublishedAt: feed.LastFetchedAt.Time,
-		FeedID:      feed.ID,
-	}
-
-	post, err := s.db.CreatePost(context.Background(), newPost)
-	if err != nil {
-		if strings.Contains(err.Error(), "duplicate key value") {
-			fmt.Println("posts updated")
-		} else {
-			log.Printf("error creating post: %v", err)
+	for _, item := range fetchedFeed.Channel.Item {
+		publishedAt := sql.NullTime{}
+		if t, err := time.Parse(time.RFC1123Z, item.PubDate); err == nil {
+			publishedAt = sql.NullTime{
+				Time:  t,
+				Valid: true,
+			}
 		}
-	} else {
-		fmt.Printf("successfully created post: %s\n", post.Title)
+
+		_, err = s.db.CreatePost(context.Background(), database.CreatePostParams{
+			ID:        uuid.New(),
+			CreatedAt: time.Now().UTC(),
+			UpdatedAt: time.Now().UTC(),
+			FeedID:    feed.ID,
+			Title:     item.Title,
+			Description: sql.NullString{
+				String: item.Description,
+				Valid:  true,
+			},
+			Url:         item.Link,
+			PublishedAt: publishedAt,
+		})
 	}
+
+	if err != nil {
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+		}
+		log.Printf("Couldn't create post: %v", err)
+	}
+
+	log.Printf("Feed %s collected, %v posts found", feed.Name, len(fetchedFeed.Channel.Item))
 
 	return nil
 }
