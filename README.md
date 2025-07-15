@@ -13,7 +13,7 @@ A program which collects RSS feeds and stores them in a database
 
   ## Available commands:
   
-- go run . login <user>
+- gator login <user>
 - go run . register <user>
 - go run . reset
 - go run . users

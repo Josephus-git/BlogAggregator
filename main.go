@@ -7,8 +7,8 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"github.com/josephus-git/BlogAggregator/internal/config"
-	"github.com/josephus-git/BlogAggregator/internal/database"
+	"github.com/josephus-git/gator/internal/config"
+	"github.com/josephus-git/gator/internal/database"
 )
 
 type state struct {
@@ -17,10 +17,10 @@ type state struct {
 }
 
 func main() {
-	Handlerrun()
+	handlerrun()
 }
 
-func Handlerrun() {
+func handlerrun() {
 	// obtain the db queries
 	dURL := "postgres://postgres:postgres@localhost:5432/gator"
 	db, err := sql.Open("postgres", dURL)
@@ -53,19 +53,19 @@ func Handlerrun() {
 	cmd.Name = arguments[0]
 	cmd.Handler = arguments
 
-	ncmds.Register("login", handlerLogin)
-	ncmds.Register("register", registerUser)
-	ncmds.Register("reset", resetData)
-	ncmds.Register("users", users)
-	ncmds.Register("addfeed", middlewareLoggedIn(addfeed))
-	ncmds.Register("feeds", feeds)
-	ncmds.Register("follow", middlewareLoggedIn(follow))
-	ncmds.Register("following", middlewareLoggedIn(following))
-	ncmds.Register("unfollow", middlewareLoggedIn(unfollow))
-	ncmds.Register("agg", agg)
-	ncmds.Register("browse", browse)
+	ncmds.register("login", handlerLogin)
+	ncmds.register("register", registerUser)
+	ncmds.register("reset", resetData)
+	ncmds.register("users", users)
+	ncmds.register("addfeed", middlewareLoggedIn(addFeed))
+	ncmds.register("feeds", feeds)
+	ncmds.register("follow", middlewareLoggedIn(follow))
+	ncmds.register("following", middlewareLoggedIn(following))
+	ncmds.register("unfollow", middlewareLoggedIn(unfollow))
+	ncmds.register("agg", aggregate)
+	ncmds.register("browse", browse)
 
-	err = ncmds.Run(&newState, cmd)
+	err = ncmds.run(&newState, cmd)
 	if err != nil {
 		fmt.Printf("error at run: %v\n", err)
 		os.Exit(1)
