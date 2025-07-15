@@ -10,6 +10,7 @@ import (
 	"github.com/josephus-git/gator/internal/database"
 )
 
+// addFeed creates a new feed and a corresponding feed follow for the authenticated user.
 func addFeed(s *state, cmd command, user database.User) error {
 	// Ensure accurate querry input
 	if len(cmd.Handler) < 3 {

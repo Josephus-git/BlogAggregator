@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// handlerLogin attempts to log in a user by setting their name in the configuration after verifying existence.
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.Handler) < 2 {
 		fmt.Println("Usage: ./gator command <name>")

@@ -8,6 +8,7 @@ import (
 	"github.com/josephus-git/gator/internal/database"
 )
 
+// unfollow removes a feed follow entry for the authenticated user based on a given feed URL.
 func unfollow(s *state, cmd command, user database.User) error {
 	// Check if input is accurate
 	if len(cmd.Handler) < 2 {

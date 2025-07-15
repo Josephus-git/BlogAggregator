@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// feeds retrieves and displays all available RSS feeds from the database.
 func feeds(s *state, cmd command) error {
 	allFeeds, err := s.db.GetFeeds(context.Background())
 	if err != nil {

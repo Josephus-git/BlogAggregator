@@ -11,6 +11,7 @@ import (
 	"github.com/josephus-git/gator/internal/database"
 )
 
+// registerUser creates a new user in the database and logs them in, ensuring the username is unique.
 func registerUser(s *state, cmd command) error {
 	if len(cmd.Handler) < 2 {
 		fmt.Println("Usage: ./gator command <name>")

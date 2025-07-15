@@ -17,6 +17,7 @@ import (
 	"github.com/josephus-git/gator/internal/database"
 )
 
+// RSSItem represents a single item within an RSS feed.
 type RSSItem struct {
 	Title       string `xml:"title"`
 	Link        string `xml:"link"`
@@ -24,6 +25,7 @@ type RSSItem struct {
 	PubDate     string `xml:"pubDate"`
 }
 
+// RSSFeed represents the structure of an RSS 2.0 feed, containing channel information and items.
 type RSSFeed struct {
 	Channel struct {
 		Title       string    `xml:"title"`
@@ -33,6 +35,7 @@ type RSSFeed struct {
 	} `xml:"channel"`
 }
 
+// fetchFeed fetches and parses an RSS feed from the given URL.
 func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	// Create a new HTTP request with context
 	req, err := http.NewRequestWithContext(ctx, "GET", feedURL, nil)
@@ -81,11 +84,10 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 		rssFeed.Channel.Item[i].Description = html.UnescapeString(rssFeed.Channel.Item[i].Description)
 	}
 	return &rssFeed, nil
-
 }
 
+// scrapeFeeds fetches the next available RSS feed, marks it as fetched, and saves its posts to the database.
 func scrapeFeeds(s *state) error {
-
 	// fetch next feed id
 	feed, err := s.db.GetNextFeedToFetch(context.Background())
 	if err != nil {
@@ -143,6 +145,7 @@ func scrapeFeeds(s *state) error {
 	return nil
 }
 
+// aggregate continuously scrapes and aggregates new posts from feeds at a specified interval.
 func aggregate(s *state, cmd command) error {
 	if len(cmd.Handler) < 2 {
 		fmt.Println("Usage: ./gator agg <time_in_seconds(numbersonly)>")
@@ -163,5 +166,4 @@ func aggregate(s *state, cmd command) error {
 		fmt.Println("----------------")
 		fmt.Println("")
 	}
-
 }

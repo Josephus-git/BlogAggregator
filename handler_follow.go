@@ -10,6 +10,7 @@ import (
 	"github.com/josephus-git/gator/internal/database"
 )
 
+// follow creates a new feed follow entry for the authenticated user based on a given feed URL.
 func follow(s *state, cmd command, user database.User) error {
 	// Check if input is accurate
 	if len(cmd.Handler) < 2 {
@@ -42,5 +43,4 @@ func follow(s *state, cmd command, user database.User) error {
 	fmt.Printf("feed follow created successfully; FeedName: %s, UserName: %s\n", FeedFollows.FeedName, FeedFollows.UserName)
 
 	return nil
-
 }

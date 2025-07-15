@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+// browse retrieves and displays a specified number of the latest posts for the current user.
 func browse(s *state, cmd command) error {
 	limit := 2
 	if len(cmd.Handler) > 1 {

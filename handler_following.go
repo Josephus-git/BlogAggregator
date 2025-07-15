@@ -7,6 +7,7 @@ import (
 	"github.com/josephus-git/gator/internal/database"
 )
 
+// following displays a list of all feeds currently followed by the authenticated user.
 func following(s *state, cmd command, user database.User) error {
 
 	feedsFollowing, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
