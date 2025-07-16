@@ -68,7 +68,7 @@ Once Gator is installed and the database is set up, you can interact with it usi
 ```
 gator <command> [arguments...]
 ```
-## Commands
+## Commands 📜
 
 ### List all registered users
 ```
