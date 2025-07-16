@@ -137,7 +137,7 @@ gator reset
 
 ---
 Feel free to explore the commands and contribute to the project!
-**Happy Gating! 🎉
+**Happy Gating! 🎉**
 
 
 
