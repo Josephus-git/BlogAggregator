@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// users retrieves and displays a list of all registered users, marking the currently active user.
 func users(s *state, cmd command) error {
 	// get list of users in db
 	names, err := s.db.GetUsers(context.Background())
