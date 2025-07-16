@@ -12,22 +12,7 @@ Gator is a command-line interface (CLI) tool designed to help users manage RSS f
 
 ## Installation 🚀
 
-To get started with Gator, follow these simple steps:
-
-1.  **Clone the repository**:
-    ```bash
-    git clone <your-repository-url>
-    cd <your-repository-directory>
-    ```
-    (Replace `<your-repository-url>` and `<your-repository-directory>` with the actual path to your repository.)
-
-2.  **Install the executable**:
-    ```bash
-    go install
-    ```
-    This command will compile the `gator` program and place the executable in your `GOPATH/bin` directory, making it available for use from your terminal.
-
-## Prerequisites 🛠️
+### Prerequisites 🛠️
 
 Before running Gator, ensure you have the following installed and configured on your system:
 
@@ -35,24 +20,44 @@ Before running Gator, ensure you have the following installed and configured on 
 * **PostgreSQL**: A running PostgreSQL database instance.
 * **Goose**: A database migration tool for Go. You can install it via:
     ```bash
-    go install [github.com/pressly/goose/v3/cmd/goose@latest](https://github.com/pressly/goose/v3/cmd/goose@latest)
+    go install https://github.com/pressly/goose/v3/cmd/goose@latest
     ```
 
-## Database Setup 🗄️
+### Database Setup 🗄️
+  **Clone the repository**:
+    ```bash
+    git clone <https://github.com/Josephus-git/gator.git>
+    cd gator
+    ```
 
 Gator utilizes `goose` for managing database schema migrations. You need to set up your PostgreSQL database and apply the necessary migrations:
 
 1.  **Configure your database connection string**:
     Navigate to the `sql/schema` directory within the cloned repository. You will find migration files there. By default, the application expects a PostgreSQL database at `postgres://postgres:postgres@localhost:5432/gator`. You might need to:
     * Create a database named `gator`.
-    * Ensure a user `postgres` with password `postgres` exists, or adjust the connection string in the `run()` function in `main.go` and in your `goose` commands to match your database credentials.
+    * Ensure a user `postgres` with password `postgres` exists, or adjust the connection string in the `goose` commands to match your database credentials.
 
 2.  **Run database migrations**:
-    From the root of your cloned repository, execute `goose` with your database connection string:
+    From the sql/schema of your cloned repository, execute `goose` with your database connection string:
     ```bash
-    goose -dir sql/schema postgres "postgres://postgres:postgres@localhost:5432/gator" up
+    goose postgres postgres://postgres:postgres@localhost:5432/gator up
     ```
     This command will apply all required database schemas and prepare your database for Gator.
+
+3. **Configure connection credentials for the postgreSQL database**:
+    Manually create a config file in your home directory, ~/.gatorconfig.json with the following content:
+   ```bash
+   {
+       "db_url": "postgres postgres://postgres:postgres@localhost:5432/gator?sslmode=disable"
+   }
+   ```
+     
+### Finally ✅
+  **Install the executable**:
+    ```bash
+    go install
+    ```
+    This command will compile the `gator` program and place the executable in your `GOPATH/bin` directory, making it available for use from your terminal.
 
 ## Usage 💻
 
@@ -60,5 +65,80 @@ Once Gator is installed and the database is set up, you can interact with it usi
 
 **General Command Structure:**
 
-```bash
+```
 gator <command> [arguments...]
+```
+## Commands
+
+### List all registered users
+```
+gator users
+```
+
+### Register a new user
+```
+gator register <username>
+# e.g.
+gator register skywalker
+```
+
+### Log in as an existing user
+```
+gator login <username>
+# e.g.
+gator login skywalker
+```
+
+### Add a new RSS feed
+```
+gator addfeed <feed_name> <feed_url>
+# e.g.
+gator addfeed GoBlog https://blog.golang.org/feed.atom
+```
+
+### Start aggregating feeds every N seconds
+```
+gator agg <seconds>
+# e.g.
+gator agg 30
+```
+
+### Browse aggregated posts
+```
+gator browse <limit>
+# e.g.
+gator browse 5
+```
+
+### List all feeds
+```
+gator feeds
+```
+
+### List feeds you are following
+```
+gator following
+```
+
+### Follow an existing feed by URL
+```
+gator follow <feed_url>
+```
+
+### Unfollow a feed by URL
+```
+gator unfollow <feed_url>
+```
+
+### Reset the entire database
+```
+gator reset
+```
+
+---
+Feel free to explore the commands and contribute to the project!
+**Happy Gating! 🎉
+
+
+
+
